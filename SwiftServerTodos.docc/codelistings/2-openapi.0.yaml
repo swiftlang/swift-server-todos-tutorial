@@ -1,0 +1,10 @@
+openapi: '3.1.0'
+info:
+  title: SwiftServerTodos
+  description: Create, read, delete, and list TODOs.
+  version: 1.0.0
+servers:
+  - url: /api
+    description: Invoke methods on this server.
+tags:
+  - name: TODOs

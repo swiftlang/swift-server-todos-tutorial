@@ -1,0 +1,8 @@
+% curl http://localhost:8080/todos
+HTTP/1.1 200 OK
+content-type: application/json; charset=utf-8
+content-length: 73
+connection: keep-alive
+date: Fri, 16 May 2025 20:28:44 GMT
+
+[{"id":"318C8306-DE9E-4ABA-9EA9-6B4F4B4607D8","contents":"example todo"}]%

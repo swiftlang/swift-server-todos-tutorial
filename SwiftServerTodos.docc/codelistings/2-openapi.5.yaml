@@ -1,0 +1,74 @@
+openapi: '3.1.0'
+info:
+  title: SwiftServerTodos
+  description: Create, read, delete, and list TODOs.
+  version: 1.0.0
+servers:
+  - url: /api
+    description: Invoke methods on this server.
+tags:
+  - name: TODOs
+paths:
+  /todos:
+    get:
+      summary: Fetch a list of TODOs.
+      operationId: listTODOs
+      tags:
+        - TODOs
+      responses:
+        '200':
+          description: Returns the list of TODOs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageOfTODOs'
+    post:
+      summary: Create a new TODO.
+      operationId: createTODO
+      tags:
+        - TODOs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTODORequest'
+      responses:
+        '201':
+          description: The TODO was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TODODetail'
+components:
+  schemas:
+    TODODetail:
+      description: The details of a TODO.
+      properties:
+        id:
+          description: A unique identifier of the TODO.
+          type: string
+          format: uuid
+        contents:
+          description: The contents of the TODO.
+          type: string
+      required:
+        - id
+        - contents
+    PageOfTODOs:
+      description: A single page of TODOs.
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TODODetail'
+      required:
+        - items
+    CreateTODORequest:
+      description: The metadata required to create a TODO.
+      properties:
+        contents:
+          description: The contents of the TODO.
+          type: string
+      required:
+        - contents

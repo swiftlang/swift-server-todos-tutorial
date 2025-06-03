@@ -1,0 +1,34 @@
+@Tutorials(name: "Get Started with Swift Server") {
+    @Intro(title: "Explore Swift on the server by building a Vapor app") {
+        
+        Learn about cloud services in Swift by building and extending a Vapor app.
+        
+        In this tutorial, you’ll explore building a basic service to use Swift Service Lifecycle, provide API endpoints using OpenAPI, and persist content to a database using the object-relational mapper Fluent.
+    }
+
+    @Chapter(name: "Before you begin") {
+        Getting ready to start the tutorial.
+        
+        @Image(source: "swift.svg", alt: "placeholder")
+
+        @TutorialReference(tutorial: "doc:0-setup")
+    }
+    
+    @Chapter(name: "Build a basic Vapor app") {
+        Get started by building a basic Vapor app.
+        
+        @Image(source: "Vapor 4 Logo Small.png", alt: "vapor logo")
+        
+        @TutorialReference(tutorial: "doc:1-introduction")
+        @TutorialReference(tutorial: "doc:2-openapi")
+        @TutorialReference(tutorial: "doc:3-database")
+    }
+
+    @Chapter(name: "Review and next steps") {
+        Review what you’ve learned and next steps.
+        
+        @Image(source: "swift.svg", alt: "placeholder")
+
+        @TutorialReference(tutorial: "doc:4-wrapup")
+    }
+}

@@ -1,0 +1,15 @@
+% git clone https://github.com/swiftlang/swift-server-todos-tutorial
+
+% cd swift-server-todos-tutorial
+
+% swift build --product SwiftServerTodos
+Building for debugging...
+[1440/1440] Emitting module SwiftServerTodos
+Build of target: 'SwiftServerTodos' complete! (74.06s)
+
+# NOTE: this path may look different based on your architecture and OS
+% swift build --product SwiftServerTodos --show-bin-path
+<some prefix>/.build/arm64-apple-macosx/debug
+
+% file .build/debug/SwiftServerTodos
+.build/debug/SwiftServerTodos: Mach-O 64-bit executable arm64

@@ -1,0 +1,7 @@
+ % swift run SwiftServerTodos
+Building for debugging...
+[1/1] Write swift-version--61257B8C62E73F86.txt
+Build of product 'SwiftServerTodos' complete! (0.45s)
+[ INFO ] [Migrator] Starting prepare [database-id: psql, migration: SwiftServerTodos.Migrations.CreateTODOs]
+[ INFO ] [Migrator] Finished prepare [database-id: psql, migration: SwiftServerTodos.Migrations.CreateTODOs]
+[ NOTICE ] Server started on http://0.0.0.0:8080

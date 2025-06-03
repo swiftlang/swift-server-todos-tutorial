@@ -1,0 +1,8 @@
+% swift --version
+Apple Swift version 6.1 (swift-6.1-RELEASE)
+
+% git --version
+git version 2.48.1
+
+% docker compose version
+Docker Compose version v2.13.0 

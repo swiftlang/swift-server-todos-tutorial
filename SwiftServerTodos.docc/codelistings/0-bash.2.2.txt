@@ -1,0 +1,8 @@
+% git clone https://github.com/swiftlang/swift-server-todos-tutorial
+
+% cd swift-server-todos-tutorial
+
+% swift build --product SwiftServerTodos
+Building for debugging...
+[1440/1440] Emitting module SwiftServerTodos
+Build of target: 'SwiftServerTodos' complete! (74.06s)

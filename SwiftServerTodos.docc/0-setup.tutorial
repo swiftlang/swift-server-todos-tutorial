@@ -1,0 +1,90 @@
+@Tutorial(time: 5) {
+    @Intro(title: "Set up your development environment") {
+        Ensure you have the right tools and example code before learning how to write your Swift server application.
+    }
+    
+    @Section(title: "Verify installed tools") {
+        @ContentAndMedia {
+            To start the tutorial you need to have compatible versions of Swift, Git, and Docker Compose installed.
+
+            Follow the steps below to verify your installed software and if necessary update or install to the latest version. 
+        }
+        
+        @Steps {
+            @Step {
+                **Run** `% swift --version` 
+
+                Verify you have Swift version 6.1 or later installed. If not, upgrade now.  Instructions to install Swift can be found at [swift.org/install](http://swift.org/install).
+
+                @Code(name: "Terminal", file: "0-bash.0.txt")
+            }
+
+            @Step {
+                **Run** `% git --version`
+                
+                You will use `% git clone` to clone the repository accompanying this tutorial.
+                Instructions to install `git` can be found [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
+                @Code(name: "Terminal", file: "0-bash.1.txt")
+            }
+
+            @Step {
+                **Run** `% docker compose version`
+                
+                This tutorial requires you to run containers that adhere to the [compose specification](https://www.compose-spec.io).
+                Docker Desktop installation steps can be found [here](https://docs.docker.com/desktop/).
+
+                @Code(name: "Terminal", file: "0-bash.2.txt")
+            }
+        }
+    }
+
+    @Section(title: "Clone and build the tutorial repository") {
+        @ContentAndMedia {            
+            A sample repository was created to simplify the examples in this tutorial.
+            To complete your setup, you’ll clone and build the repository.
+        }
+
+        @Steps {
+            @Step {
+                **Run** `% git clone`
+
+                Use the URL provided on the right to clone the tutorial repo.
+
+                @Code(name: "Terminal", file: "0-bash.2.0.txt")
+            }
+
+            @Step {
+                **Run** `% cd swift-server-todos-tutorial`
+                
+                Navigate to the directory that was cloned.
+
+                @Code(name: "Terminal", file: "0-bash.2.1.txt")
+            }
+
+            @Step {
+                **Run** `% swift build --product SwiftServerTodos`
+                
+                `swift build --product` leverages the Swift Package Manager to fetch all the dependencies and build an executable binary for the product you specify.
+                This can take a minute or two.
+
+                @Code(name: "Terminal", file: "0-bash.2.2.txt")
+            }
+
+            @Step {
+                **Run** `% swift build --product SwiftServerTodos --show-bin-path`
+                
+                The --show-bin-path switch returns the path of the binary that swift build produced.
+
+                @Code(name: "Terminal", file: "0-bash.2.3.txt")
+            }
+
+            @Step {
+                **Run** `% file .build/debug/SwiftServerTodos`
+                
+                This verifies that it is an executable binary for your system architecture and that you are ready to start the tutorial!
+
+                @Code(name: "Terminal", file: "0-bash.2.4.txt")
+            }
+        }
+}

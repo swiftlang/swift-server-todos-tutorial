@@ -1,0 +1,43 @@
+@Article(time: 5) {
+    @Intro(title: "Review and where to go next") {
+        Review what you built and where to find resources to build something you can ship to production.
+    }
+
+    ## Summary
+
+    ### Review
+
+    In this tutorial, you built the server side of a TODO management application in Swift!
+    Specifically, you:
+
+    1. Started with a simple Swift `HTTP` service using Vapor that returned a pre-generated response to an `HTTP` `GET` request.
+    2. Leveraged `OpenAPI` to generate the routes and handlers.
+    3. Added in `Fluent` to interact with a PostgreSQL database.
+
+    This should give you a taste of how to write `HTTP` services with Swift!
+
+    The list below provides a complete list of the tools used:
+
+    * Swift OpenAPI libraries
+        * [Meet Swift OpenAPI Generator](https://www.youtube.com/watch?v=US5Blei-5Kg&vl=en)
+    * [Vapor](https://vapor.codes) to provide the web framework.
+    * [Fluent ORM](https://docs.vapor.codes/fluent/overview/) for database persistence and migrations.
+    * [Swift Log](https://swiftpackageindex.com/apple/swift-log/1.6.3/documentation/logging) to add basic logging to the application.
+    * [ServiceLifecycle](https://github.com/swift-server/swift-service-lifecycle/tree/main) library to coordinate services and signaling.
+    * [docker compose](https://docs.docker.com/compose/) to help build the swift service and connect to PostgreSQL.
+
+    ### Where do I go from here?
+
+    Apart from the tools and libraries we covered in the tutorial, there's a plethora of options that are available to write Swift services:
+
+    * HTTP
+        * [Vapor](https://vapor.codes) is the web framework this tutorial used.
+        * [Hummingbird](https://hummingbird.codes) is another web framework you could use.
+    * GRPC
+        * [Swift GRPC](https://github.com/grpc/grpc-swift) is another library you can use to build API focused cloud services in Swift.
+    * OpenAPI provides examples of how to use it as both client and server, with multiple frameworks:
+        * [Vapor server example](https://github.com/apple/swift-openapi-generator/tree/main/Examples/hello-world-vapor-server-example)
+        * [Hummingbird server example](https://github.com/apple/swift-openapi-generator/tree/main/Examples/hello-world-hummingbird-server-example)
+        * [HTTP Client example](https://github.com/apple/swift-openapi-generator/tree/main/Examples/hello-world-async-http-client-example)
+        * [More examples](https://github.com/apple/swift-openapi-generator/tree/main/Examples/)
+}

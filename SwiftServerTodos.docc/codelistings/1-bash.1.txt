@@ -1,0 +1,7 @@
+% swift run SwiftServerTodos
+
+[1/1] Planning build
+Building for debugging...
+[1/1] Write swift-version--7D0960044F38567D.txt
+Build of product 'SwiftServerTodos' complete! (2.32s)
+[ NOTICE ] Server started on http://0.0.0.0:8080

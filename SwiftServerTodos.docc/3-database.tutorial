@@ -1,0 +1,212 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Integrate a database") {
+        Use the Fluent ORM to connect a PostgreSQL database to the tutorial app.
+    }
+    
+    @Section(title: "Set up the infrastructure") {
+        @ContentAndMedia {
+            Set up the app dependencies.
+        }
+        
+        @Steps {
+            @Step {
+                **Run** `% docker compose up postgres`
+
+                Open a new terminal and run docker compose to start a Postgres server.
+                
+                @Code(name: "Terminal", file: 3-bash.0.txt)
+            }
+        }
+    }
+
+    @Section(title: "Configure the database tables and connection") {
+        @ContentAndMedia {
+            Create tables with Fluent in code as a Model and then use Migrations in the database. You configure the database connection and learn where to run the migrations for the app.
+        }
+            
+        @Steps {
+            @Step {
+                **Add** the Fluent dependencies
+                
+                Open `Package.swift` to add the Fluent dependencies to the target.
+
+                @Code(name: "Database.swift", file: 3-package.0.swift, previousFile: 2-package.1.swift)
+            }
+            
+            @Step {
+                **Edit** `Database.swift`
+                
+                Change `TODO` to a class that will represent a database table.  **Note:** The class is nested in the parent type `DB` to provide a namespace for the class.
+
+                @Code(name: "Database.swift", file: 3-database.0.swift, previousFile: 1-database.0.swift)
+            }
+
+            @Step {
+                **Edit** the class to conform to a Fluent `Model`.
+                
+                This enables the class to benefit from default implementations of common database operations.
+
+                @Code(name: "Database.swift", file: 3-database.1.swift)
+            }
+
+            @Step {
+                **Add** the `schema` property, define an `ID`, to satisfy the `Model` protocol. 
+                
+                The `ID` serves as the primary key of the database, `Field` identifies a column of type string called contents.
+                @Code(name: "Database.swift", file: 3-database.2.swift)
+            }
+
+            @Step {
+                **Create** a `Migrations` enum for a namespace
+                
+                Add CreateTODOs, conforming to `AsyncMigration` with stubs to provide the migration to create a table.
+                
+                @Code(name: "Database.swift", file: 3-database.3.swift)
+            }
+
+            @Step {
+                **Implement** the migrations.
+                
+                `database.schema(_)` and `field(_)` to reference the table, while the `create()` and `delete()` methods do the bulk of the work.
+
+                @Code(name: "Database.swift", file: 3-database.4.swift)
+            }
+
+            @Step {
+                **Create** a `configureDatabase` function
+                
+                The function will configure the connection to the databse and run the migrations. 
+
+                @Code(name: "Database.swift", file: 3-database.5.swift)
+            }
+
+            @Step {
+                **Define** a URL that provides the connection to the database.
+                
+                Choose the URL by either reading it from the environment or defaulting to something that would work in most development setups.
+                
+                @Code(name: "Database.swift", file: 3-database.6.swift)
+            }
+
+            @Step {
+                **Configure** the function to run the database migrations
+                
+                The database migrations will create the table.
+
+                @Code(name: "Database.swift", file: 3-database.7.swift)
+            }
+
+            @Step {
+                **Add** a call to `configureDatabase(app: app)`
+                
+                Calling `configureDatabase` with a reference to `app` will connect to the database using the URL and run the migrations before the app initializes the server.
+                
+                @Code(name: "Entrypoint.swift", file: 3-entrypoint.1.swift, previousFile: 3-entrypoint.0.swift)
+            }
+        }
+    }
+    @Section(title: "Add the database layer to the routes") {
+        @ContentAndMedia {
+            Build on the OpenAPI stubs built in a previous section to add persistence to your OpenAPI routes.
+        }
+    
+        @Steps {
+            @Step {
+                **Edit** `APIHandler.swift`
+                
+                Add a `DB` property, and add imports for `Fluent` and `HTTPTypes`.
+                
+                @Code(name: "APIHandler.swift", file: 3-apihandler.0.swift, previousFile: 2-apihandler.5)
+            }
+
+            @Step {
+                **Review** the idea for creating a new TODO.
+                
+                As part of the OpenAPI generated types, we have the stubs of the methods we need to implement for our routes. In the previous chapter, we had returned a 500 status code for the create todo route.
+                
+                @Code(name: "APIHandler.swift", file: 3-apihandler.1.swift)
+            }
+
+            @Step {
+                **Implement** the code to read from the postgres database.
+
+                Use the `DB.TODO()` method to Instantiate a new TODO object from the database.
+                
+                @Code(name: "APIHandler.swift", file: 3-apihandler.2.swift)
+            }
+
+            @Step {
+                **Review** the idea for listing all the available TODOs.
+
+                Review the commented code to evalute the idea for listing all of the TODOs from the database.
+
+                @Code(name: "APIHandler.swift", file: 3-apihandler.3.swift)
+            }
+
+            @Step {
+                **Implement** fetching and returning the TODOs from the database.
+
+                Fetch TODOs from the database and store them in an array using the code on the right.
+
+                @Code(name: "APIHandler.swift", file: 3-apihandler.4.swift)
+            }
+
+            @Step {
+                **Edit** `ServerService.swift`.
+                
+                Add the database as a parameter to `APIHandler`.
+                
+                @Code(name: "ServerService.swift", file: 3-serverservice.1.swift, previousFile: 3-serverservice.0.swift)
+            }
+        }
+    }
+        
+    @Section(title: "Run and test the code") {
+        @ContentAndMedia {
+            Using a terminal, run the updated Vapor app and try it out!
+        }
+        @Steps {
+            @Step {
+                **Run** `% swift run SwiftServerTodos`
+                
+                To test your work, run the commands on the right in 2 separate terminals.
+                In this first terminal, run the server.
+                
+                @Code(name: "Terminal 1", file: 3-bash-swiftrun.0.txt)
+            }
+
+            @Step {
+                **Run** `% curl -i -X POST \
+                -H "Content-Type: application/json" \
+                -d '{ "contents": "my first todo" }' \
+                localhost:8080/api/todos`
+                
+                In a second terminal, run a `curl` HTTP `POST` request to create a TODO. 
+                @Code(name: "Terminal 2", file: 3-bash-curl.0.txt)
+            }
+
+            @Step {
+                **Review** the output in the second terminal.
+                
+                The output includes `HTTP/1.1 201 Created` and shows the new TODO created.
+                @Code(name: "Terminal 2", file: 3-bash-curl.1.txt)
+            }
+
+            @Step {
+                **Run** `% curl localhost:8080/api/todos`
+                
+                After creating the new TODO, make a `GET` request to retrieve all the TODOs.
+                
+                @Code(name: "Terminal 2", file: 3-bash-curl.2.txt)
+            }
+
+            @Step {
+                **Review** the output
+                
+                You should see the todo you created earlier.
+
+                @Code(name: "Terminal 2", file: 3-bash-curl.3.txt)
+            }
+        }
+    }
+}

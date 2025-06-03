@@ -1,0 +1,99 @@
+@Tutorial(time: 5) {
+    @Intro(title: "Introduction") {
+        The tutorial example contains a Package.swift file that defines the dependencies and targets for the app, as well as a Sources directory with starter files. The finished tutorial is also provided in the Completed folder.
+        
+        The starter code contains all the files you'll need to get started. 
+        Follow the steps below for a quick introduction.
+    }
+    
+    @Section(title: "Explore the parts of a basic app") {
+        @ContentAndMedia {
+            Carefully review the files the tutorial Starter files, noting the purpose of each. Then build and run the starter code to prove it's operational.  **Note:** Steps one through five will switch between each of the five files. Step six switches to a terminal.
+        }
+        
+        @Steps {
+            @Step {
+                **Review** `Package.swift`, which contains the dependencies used in this tutorial.
+                
+                The starter depends on the web framework Vapor, a package to manage the lifecycle of a service, [Swift Service Lifecycle]((https://swiftpackageindex.com/swift-server/swift-service-lifecycle/documentation/servicelifecycle)), and a package to add basic logs, [Swift Log](https://swiftpackageindex.com/apple/swift-log/documentation/logging).
+                
+                @Code(name: "Package.swift", file: 1-package.0.swift)
+            }
+            
+            @Step {
+                **Review** `Entrypoint.swift`
+                
+                `Entrypoint.swift` reads environment variables, configures the logging service, and sets up the Vapor application.
+                With the Vapor app created, you create a service to help manage the lifecycle of the app.
+                
+                @Code(name: "Entrypoint.swift", file: 1-entrypoint.0.swift)
+            }
+
+            @Step {
+                **Review** `ServerService.swift`
+                
+                `ServerService.swift` configures the server.
+                The configuration includes logging and two initial routes.
+                The struct `ServerService` conforms to the protocol `Service` from Swift Service Lifecycle, which provides the async context in which to run the app.
+                
+                @Code(name: "ServerService.swift", file: 1-serverservice.0.swift)
+            }
+
+            @Step {
+                **Review** `Telemetry.swift`.
+                
+                `Telemetry.swift` provides a method to bootstrap logging from the environment and the logging middleware that is added to Vapor in the `configureServer` method in `ServerService.swift`.
+
+                @Code(name: "Telemetry.swift", file: 1-telemetry.0.swift)
+            }
+
+            @Step {
+                **Review** `Database.swift`.
+                
+                `Database.swift` provides a struct with the model for the TODO that the app returns from the initial route in `ServerService.swift`.
+
+                @Code(name: "Database.swift", file: 1-database.0.swift)
+            }
+
+            @Step {
+                **Run** `swift run SwiftServerTodos`
+
+                Open a terminal to build and run the starter using the `swift run` command.
+
+                @Code(name: "Terminal", file: 1-bash.0.txt)
+            }
+
+            @Step {
+                **Review** the output from the run command in your terminal.
+                
+                After the app starts, it runs at http://localhost:8080.
+                
+                @Code(name: "Terminal", file: 1-bash.1.txt, previousFile: 1-bash.0.txt)
+            }
+
+            @Step {
+                **Run** `% curl -i -X GET http://localhost:8080/todos`
+                
+                Open a second terminal and run a `curl` command to exercise the app.
+                
+                @Code(name: "Terminal", file: 1-curl.0.txt)
+            }
+
+            @Step {
+                **Review** the output from the app in the second terminal.
+                
+                This is the result of the initial `/todos` route in the app.
+                
+                @Code(name: "Terminal", file: 1-curl.1.txt, previousFile: 1-curl.0.txt)
+            }
+
+            @Step {
+                **Review** the output in the first terminal.
+                
+                As you invoke the curl command, you will also see the request logged to the console where you started the app.
+                
+                @Code(name: "Terminal", file: 1-bash.2.txt, previousFile: 1-bash.1.txt)
+            }
+        }
+    }
+}

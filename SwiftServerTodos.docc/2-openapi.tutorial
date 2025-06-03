@@ -1,0 +1,219 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Specify routes using OpenAPI") {
+        Learn how to add an OpenAPI document, generate server stubs using the OpenAPI plugin, and integrate the generated code into the app.
+    }
+    
+    @Section(title: "Add an OpenAPI document") {
+        @ContentAndMedia {
+            Create a new OpenAPI document to define the service's HTTP API.
+        }
+        
+        @Steps {
+
+            @Step {
+                **Edit** `Packages.swift`
+                
+                Add the OpenAPI dependencies noted on the right.
+                
+                @Code(name: "Package.swift", file: 2-package.0.swift, previousFile: 1-package.0.swift)
+            }            
+            
+            @Step {
+                **Create** `openapi.yaml`
+
+                In the `Sources/SwiftServerTodos` directory create a base OpenAPI document named `openapi.yaml`. 
+                The document should include a version, `info` providing a high level summary of the API, and `servers` that is used in generated documentation for the API as illustrated on the right.
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.0.yaml)
+            }
+            
+            @Step {
+                **Add** the first schema
+                
+                In the openapi.yaml add a schema for a TODO item, mapping to the model defined in `Database.swift`. 
+                The schema `TODODetail` defines `id` and `contents` properties, both as Strings.
+                The additional `format` in the `id` property constrains OpenAPI to verify the string format matches a UUID.
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.1.yaml, previousFile: 2-openapi.0.yaml)
+            }
+
+            @Step {
+                **Extend** the schemas to support a list of TODOs
+                
+                The schema `PageOfTODOs` defines a list of TODO items, referencing the schema for `TODODetail`.
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.2.yaml, previousFile: 2-openapi.1.yaml)
+            }
+
+            @Step {
+                **Extend** the schemas to support creating a new `TODO` item.
+                
+                The schema `CreateTODORequest` defines `contents`, but not an `id`, as the app creates that.
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.3.yaml, previousFile: 2-openapi.2.yaml)
+            }
+
+            @Step {
+                **Add** a route to return TODOs
+                
+                Add paths to include a `/todos` get route to return a list of the TODOs.
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.4.yaml, previousFile: 2-openapi.3.yaml)
+            }
+
+            @Step {
+                **Add** a route to create a new TODO.
+
+                Add to paths a `/todos` post route to create a new TODO
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.5.yaml, previousFile: 2-openapi.4.yaml)
+            }
+
+            @Step {
+                **Add** routes to retrieve and to delete an individual TODO.
+                
+                The parameter for the route uses a reference to a component, which allows for re-use.
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.6.yaml, previousFile: 2-openapi.5.yaml)
+            }
+
+            @Step {
+                **Define** the parameter for the TODO identifier.
+
+                The TODO identifier will be used to determine which TOTO to retrieve or delete.
+                
+                @Code(name: "openapi.yaml", file: 2-openapi.7.yaml, previousFile: 2-openapi.6.yaml)
+            }
+        }
+    }
+    
+    @Section(title: "OpenAPI generator") {
+        @ContentAndMedia {
+            Configure and use the OpenAPI plugin to generate code from the OpenAPI document.
+        }
+        
+        @Steps {
+            @Step {
+                **Create** `openapi-generator-config.yaml`
+                
+                This provides configuration for the generator to create both types from the schema and server stubs. **Note:** Create `openapi-generator-config.yaml` alongside the OpenAPI document.
+                
+                @Code(name: "openapi-generator-config.yaml", file: 2-openapi-generator-config.0.yaml)
+            }
+            
+            @Step {
+                **Add** the OpenAPI generator plugin.
+                
+                Add the OpenAPI generator plugin to the plugins section as illistrated on the right.
+
+                @Code(name: "Package.swift", file: 2-package.1.swift, previousFile: 2-package.0.swift)
+            }
+            
+            @Step {
+                **Run** `swift build --product SwiftServerTodos`
+                
+                Open a terminal, stop the running server with ctrl+C, and rebuild the project.  **Note:** Remember to use the --product switch to speed up the build.
+                
+                @Code(name: "Terminal", file: 2-bash.0.txt)
+            }
+
+            @Step {
+                **Review** the output from the build.
+                
+                Whenever you build your package, if the OpenAPI document or the config file has changed, the plugin regenerates the Swift code behind the scenes.
+                
+                @Code(name: "Terminal", file: 2-bash.1.txt, previousFile: 2-bash.0.txt)
+            }
+
+            @Step {
+                **Create** `APIHandler.swift`
+                 
+                Create a new file in `./Sources/SwiftServerTodos/` to provide the implementation for the stubs.
+                Import the `OpenAPIRuntime` module.
+                
+                @Code(name: "APIHandler.swift", file: 2-apihandler.0.swift)
+            }
+
+            @Step {
+                **Create** an `APIHandler` struct
+                
+                The struct must conform to `APIProtocol`.
+                `APIProtocol` is a protocol generated from the OpenAPI document and defines the methods to implement the server.
+                
+                @Code(name: "APIHandler.swift", file: 2-apihandler.1.swift, previousFile: 2-apihandler.0.swift)
+            }
+
+            @Step {
+                **Add** a stub for the `listTODOs` method.
+                
+                You must provide an initial implementation for the method so it compiles with the intent to provide the implementation later, return a `500` error code. 
+                
+                @Code(name: "APIHandler.swift", file: 2-apihandler.2.swift, previousFile: 2-apihandler.1.swift)
+            }
+
+            @Step {
+                **Add** a stub for the `createTODO` method.
+                
+                You must also provide an initial implementation for the `createTODO` method.
+                
+                @Code(name: "APIHandler.swift", file: 2-apihandler.3.swift, previousFile: 2-apihandler.2.swift)
+            }
+
+            @Step {
+                **Add** `getTODODetail` method implementation
+                
+                Provide an initial implementation for the `getTODODetail` method.
+                
+                @Code(name: "APIHandler.swift", file: 2-apihandler.4.swift, previousFile: 2-apihandler.3.swift)
+            }
+
+            @Step {
+                **Add** `deleteTODO` method implementation 
+                
+                Provide an initial implementation for the `deleteTODO` method.
+                
+                @Code(name: "APIHandler.swift", file: 2-apihandler.5.swift, previousFile: 2-apihandler.4.swift)
+            }
+        }
+    }
+        
+    @Section(title: "Configure Vapor to use the API handler") {
+        @ContentAndMedia {
+            Now create an instance of the APIHandler and a Vapor transport. Use the [transport](https://swiftpackageindex.com/apple/swift-openapi-runtime/documentation/openapiruntime/servertransport) to register your implementation, enabling your app to use the transport for routes you implemented.
+        }
+        
+        @Steps {
+            @Step {
+                **Review** the `ServerService.swift` file.
+                
+                @Code(name: "ServerService.swift", file: 1-serverservice.0.swift)
+            }
+            @Step {
+                **Remove** the initial `app.get("todos")` route.
+                
+                @Code(name: "ServerService.swift", file: 1-serverservice.1.swift, previousFile:1-serverservice.0.swift)
+            }
+            @Step {
+                **Add** `OpenAPIVapor` import
+                
+                Edit the file `ServerService.swift` and import `OpenAPIVapor`.
+                
+                @Code(name: "ServerService.swift", file: 2-serverservice.0.swift, previousFile: 1-serverservice.1.swift)
+            }
+            @Step {
+                **Create** an instance of `APIHandler`.
+
+                Create an instance of the `APIHandler` struct
+                
+                @Code(name: "ServerService.swift", file: 2-serverservice.1.swift, previousFile: 2-serverservice.0.swift)
+            }
+            @Step {
+                **Instantiate** the transport and register the handler.
+                
+                Add the code on the right to use the implementation you created.
+                
+                @Code(name: "ServerService.swift", file: 2-serverservice.2.swift, previousFile: 2-serverservice.1.swift)
+            }
+        }
+    }        
+}

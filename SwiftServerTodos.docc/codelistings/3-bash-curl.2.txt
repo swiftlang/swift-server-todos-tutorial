@@ -1,0 +1,17 @@
+% curl -i -X POST \
+-H "Content-Type: application/json" \
+-d '{ "contents": "my first todo" }' \
+localhost:8080/api/todos
+
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+content-length: 83
+connection: keep-alive
+date: Thu, 15 May 2025 04:59:34 GMT
+
+{
+  "contents" : "my first todo",
+  "id" : "5A91C1AA-293C-4298-B725-01333BFF2544"
+}
+
+% curl localhost:8080/api/todos
