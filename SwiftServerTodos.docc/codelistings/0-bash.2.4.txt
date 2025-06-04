@@ -10,6 +10,10 @@ Build of target: 'SwiftServerTodos' complete! (74.06s)
 # NOTE: this path may look different based on your architecture and OS
 % swift build --product SwiftServerTodos --show-bin-path
 <some prefix>/.build/arm64-apple-macosx/debug
+# or depending on your hardware
+<some prefix>/.build/x86_64-apple-macosx/debug
+# or depending on your OS
+<some prefix>/.build/aarch64-unknown-linux-gnu/debug
 
-% file .build/debug/SwiftServerTodos
-.build/debug/SwiftServerTodos: Mach-O 64-bit executable arm64
+% ls .build/debug/SwiftServerTodos
+.build/debug/SwiftServerTodos
