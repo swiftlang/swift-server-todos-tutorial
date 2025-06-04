@@ -12,3 +12,5 @@ Build of target: 'SwiftServerTodos' complete! (74.06s)
 <some prefix>/.build/arm64-apple-macosx/debug
 # or depending on your hardware
 <some prefix>/.build/x86_64-apple-macosx/debug
+# or depending on your OS
+<some prefix>/.build/aarch64-unknown-linux-gnu/debug

@@ -80,9 +80,9 @@
             }
 
             @Step {
-                **Run** `% file .build/debug/SwiftServerTodos`
+                **Run** `% ls .build/debug/SwiftServerTodos`
                 
-                This verifies that it is an executable binary for your system architecture and that you are ready to start the tutorial!
+                This verifies that the executable binary was built and that you are ready to start the tutorial!
 
                 @Code(name: "Terminal", file: "0-bash.2.4.txt")
             }
