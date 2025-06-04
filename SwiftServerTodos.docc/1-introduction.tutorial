@@ -8,7 +8,7 @@
     
     @Section(title: "Explore the parts of a basic app") {
         @ContentAndMedia {
-            Carefully review the files the tutorial Starter files, noting the purpose of each. Then build and run the starter code to prove it's operational.  **Note:** Steps one through five will switch between each of the five files. Step six switches to a terminal.
+            Carefully review the tutorial Starter files, noting the purpose of each. Then build and run the starter code to prove it's operational.  **Note:** Steps one through five will switch between each of the five files. Step six switches to a terminal.
         }
         
         @Steps {
