@@ -16,7 +16,8 @@ RUN swift package resolve \
 
 # Copy the Sources and Public dirs.
 COPY ./Sources ./Sources
-COPY ./Public ./Public
+# TODO: currently public not in here
+# COPY ./Public ./Public
 
 # Build the application in release mode with a statically linked runtime.
 # the product here is tied to the target name in Package.swift
