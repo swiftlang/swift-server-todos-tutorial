@@ -22,7 +22,7 @@ COPY ./Sources ./Sources
 # Build the application in release mode with a statically linked runtime.
 # the product here is tied to the target name in Package.swift
 RUN swift build -c release \
-        --product Demo \
+        --product SwiftServerTodos \
         --static-swift-stdlib
 
 # Switch over to a lighter-weight runtime image.
@@ -40,7 +40,7 @@ RUN mkdir -p /app/bin
 RUN mkdir -p /app/lib
 
 # Copy over the binary and the Public directory.
-COPY --from=builder /code/.build/release/Demo /app/bin/
+COPY --from=builder /code/.build/release/SwiftServerTodos /app/bin/
 # TODO: currently public not in here
 # COPY --from=builder /code/Public /app/Public
 
@@ -56,4 +56,4 @@ EXPOSE 8080
 ENV SWIFT_BACKTRACE=enable=yes,sanitize=yes,threads=all,images=all,interactive=no,swift-backtrace=/app/lib/swift-backtrace-static
 
 # Start the server.
-CMD /app/bin/Demo serve --hostname 0.0.0.0 --port 8080
+CMD /app/bin/SwiftServerTodos serve --hostname 0.0.0.0 --port 8080
