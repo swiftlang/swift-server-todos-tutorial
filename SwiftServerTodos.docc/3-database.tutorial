@@ -82,9 +82,9 @@
 
             @Step {
                 **Define** a URL that provides the connection to the database.
-                
-                Choose the URL by either reading it from the environment or defaulting to something that would work in most development setups.
-                
+
+                Choose the URL by either reading it from the configuration or defaulting to something that would work in most development setups.
+
                 @Code(name: "Database.swift", file: 3-database.6.swift)
             }
 
@@ -97,9 +97,9 @@
             }
 
             @Step {
-                **Add** a call to `configureDatabase(app: app)`
-                
-                Calling `configureDatabase` with a reference to `app` will connect to the database using the URL and run the migrations before the app initializes the server.
+                **Add** a call to `configureDatabase(app:config:)`
+
+                Calling `configureDatabase` with a reference to `app` and `config` will connect to the database using the URL and run the migrations before the app initializes the server.
                 
                 @Code(name: "Entrypoint.swift", file: 3-entrypoint.1.swift, previousFile: 3-entrypoint.0.swift)
             }

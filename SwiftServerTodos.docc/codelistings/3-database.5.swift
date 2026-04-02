@@ -1,9 +1,10 @@
+import Configuration
 import Fluent
 import FluentPostgresDriver
 import Foundation
 import Vapor
 
-func configureDatabase(app: Application) async throws {
+func configureDatabase(app: Application, config: ConfigReader) async throws {
     // Exercise: configure the database connection
 }
 
@@ -27,7 +28,7 @@ enum Migrations {
                 .field("contents", .string, .required)
                 .create()
         }
-        
+
         func revert(on database: Database) async throws {
             try await database
                 .schema(DB.TODO.schema)

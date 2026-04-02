@@ -1,19 +1,21 @@
+import Configuration
 import ServiceLifecycle
 import Vapor
 
 @main
 struct Entrypoint {
     static func main() async throws {
-        var env = try Environment.detect()
+        let config = ConfigReader(provider: EnvironmentVariablesProvider())
 
         // Configure telemetry
-        try await configureTelemetryServices(env: &env)
+        try await configureTelemetryServices(config)
 
         // Create the server
+        let serverConfig = config.scoped(to: "address")
         let app = try await Vapor.Application.make()
         app.http.server.configuration.address = .hostname(
-            getOptionalEnvVar("SERVER_ADDRESS") ?? "0.0.0.0",
-            port: try getOptionalEnvVar("SERVER_PORT") ?? 8080
+            serverConfig.string(forKey: "address", default: "0.0.0.0"),
+            port: serverConfig.int(forKey: "port", default: 8080)
         )
 
         // Configure the server

@@ -24,6 +24,7 @@
     * [Fluent ORM](https://docs.vapor.codes/fluent/overview/) for database persistence and migrations.
     * [Swift Log](https://swiftpackageindex.com/apple/swift-log/1.6.3/documentation/logging) to add basic logging to the application.
     * [ServiceLifecycle](https://github.com/swift-server/swift-service-lifecycle/tree/main) library to coordinate services and signaling.
+    * [Swift Configuration](https://github.com/apple/swift-configuration/tree/main) library to read the application configuration.
     * [docker compose](https://docs.docker.com/compose/) to help build the swift service and connect to PostgreSQL.
 
     ### Where do I go from here?
