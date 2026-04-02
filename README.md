@@ -22,7 +22,7 @@ The tutorial covers these Swift server development topics:
 
 ## Requirements
 
-* [Swift 6.1 or later](http://swift.org/install)
+* [Swift 6.3 or later](http://swift.org/install)
 * Git
 * Docker Compose
 
