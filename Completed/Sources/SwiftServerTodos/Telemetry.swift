@@ -4,20 +4,12 @@ import Logging
 import Vapor
 
 func configureTelemetryServices(_ config: ConfigReader) async throws {
-    // Vapor's LoggingSystem.bootstrap(from:) detects the log level from CLI args (--log),
-    // then falls back to the LOG_LEVEL env var, then to a default based on environment.
-    // We inject ConfigReader's value as a middle priority between CLI args and Vapor's
-    // env var fallback, so the effective priority is:
-    //   1. CLI arg (--log)
-    //   2. ConfigReader value (from any provider)
-    //   3. Vapor's built-in fallback (LOG_LEVEL env var, then environment default)
-    // This is a temporary workaround until Vapor supports swift-configuration natively.
-    var env = try Environment.detect()
-    let logConfig = config.scoped(to: "log")
-    if !env.arguments.contains("--log"), let level = logConfig.string(forKey: "level") {
-        env.arguments += ["--log", level]
+    let level = config.scoped(to: "log")
+        .string(forKey: "level")
+        .flatMap { Logger.Level.init(rawValue: $0) } ?? .info
+    LoggingSystem.bootstrap { label in
+        ConsoleLogger(label: label, console: Terminal(), level: level)
     }
-    try LoggingSystem.bootstrap(from: &env)
 }
 
 extension Logger {
