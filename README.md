@@ -70,6 +70,7 @@ The application uses a three-tier architecture:
 ### Additional libraries
 * [Swift Log](https://swiftpackageindex.com/apple/swift-log/documentation/logging) – Logging framework.
 * [ServiceLifecycle](https://github.com/swift-server/swift-service-lifecycle) – Service lifecycle management.
+* [Swift Configuration](https://github.com/apple/swift-configuration) – Service configuration reader.
 
 ## API documentation
 
