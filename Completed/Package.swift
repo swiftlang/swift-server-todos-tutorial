@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.3
 
 import PackageDescription
 
@@ -14,6 +14,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.0.0"),
         .package(url: "https://github.com/swift-server/swift-openapi-vapor", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-configuration", from: "1.2.0"),
 
         // Telemetry
         .package(url: "https://github.com/apple/swift-log", from: "1.5.2"),
@@ -31,6 +32,7 @@ let package = Package(
                 .product(name: "ServiceLifecycle", package: "swift-service-lifecycle"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIVapor", package: "swift-openapi-vapor"),
+                .product(name: "Configuration", package: "swift-configuration"),
 
                 // Telemetry
                 .product(name: "Logging", package: "swift-log"),

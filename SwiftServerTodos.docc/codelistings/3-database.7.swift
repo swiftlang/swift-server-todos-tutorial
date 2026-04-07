@@ -1,11 +1,16 @@
+import Configuration
 import Fluent
 import FluentPostgresDriver
 import Foundation
 import Vapor
 
-func configureDatabase(app: Application) async throws {
-    let postgresURL = try getOptionalURLEnvVar("POSTGRES_URL")
-        ?? URL(string: "postgres://postgres@localhost:5432/postgres?sslmode=disable")!
+func configureDatabase(app: Application, config: ConfigReader) async throws {
+    let postgresConfig = config.scoped(to: "postgres")
+    let postgresURL = postgresConfig.string(
+        forKey: "url",
+        as: URL.self,
+        default: URL(string: "postgres://postgres@localhost:5432/postgres?sslmode=disable")!
+    )
     try app.databases.use(.postgres(url: postgresURL), as: .psql)
 
     app.migrations.add([
@@ -34,7 +39,7 @@ enum Migrations {
                 .field("contents", .string, .required)
                 .create()
         }
-        
+
         func revert(on database: Database) async throws {
             try await database
                 .schema(DB.TODO.schema)

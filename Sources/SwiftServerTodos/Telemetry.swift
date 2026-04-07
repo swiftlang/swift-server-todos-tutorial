@@ -1,9 +1,15 @@
+import Configuration
 import Foundation
 import Logging
 import Vapor
 
-func configureTelemetryServices(env: inout Environment) async throws {
-    try LoggingSystem.bootstrap(from: &env)
+func configureTelemetryServices(_ config: ConfigReader) async throws {
+    let level = config.scoped(to: "log")
+        .string(forKey: "level")
+        .flatMap { Logger.Level.init(rawValue: $0) } ?? .info
+    LoggingSystem.bootstrap { label in
+        ConsoleLogger(label: label, console: Terminal(), level: level)
+    }
 }
 
 extension Logger {

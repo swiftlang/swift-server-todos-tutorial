@@ -15,17 +15,17 @@
             @Step {
                 **Review** `Package.swift`, which contains the dependencies used in this tutorial.
                 
-                The starter depends on the web framework Vapor, a package to manage the lifecycle of a service, [Swift Service Lifecycle]((https://swiftpackageindex.com/swift-server/swift-service-lifecycle/documentation/servicelifecycle)), and a package to add basic logs, [Swift Log](https://swiftpackageindex.com/apple/swift-log/documentation/logging).
+                The starter depends on the web framework Vapor, a package to manage the lifecycle of a service, [Swift Service Lifecycle]((https://swiftpackageindex.com/swift-server/swift-service-lifecycle/documentation/servicelifecycle)), a package to read configuration from different sources, [Swift Configuration](https://swiftpackageindex.com/apple/swift-configuration/documentation/configuration), and a package to add basic logs, [Swift Log](https://swiftpackageindex.com/apple/swift-log/documentation/logging).
                 
                 @Code(name: "Package.swift", file: 1-package.0.swift)
             }
             
             @Step {
                 **Review** `Entrypoint.swift`
-                
-                `Entrypoint.swift` reads environment variables, configures the logging service, and sets up the Vapor application.
+
+                `Entrypoint.swift` creates a `ConfigReader` to read configuration from environment variables, configures the logging service, and sets up the Vapor application.
                 With the Vapor app created, you create a service to help manage the lifecycle of the app.
-                
+
                 @Code(name: "Entrypoint.swift", file: 1-entrypoint.0.swift)
             }
 
@@ -41,8 +41,8 @@
 
             @Step {
                 **Review** `Telemetry.swift`.
-                
-                `Telemetry.swift` provides a method to bootstrap logging from the environment and the logging middleware that is added to Vapor in the `configureServer` method in `ServerService.swift`.
+
+                `Telemetry.swift` provides a method to bootstrap logging using the configuration reader and the logging middleware that is added to Vapor in the `configureServer` method in `ServerService.swift`.
 
                 @Code(name: "Telemetry.swift", file: 1-telemetry.0.swift)
             }
