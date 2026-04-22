@@ -1,0 +1,149 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Add observability with OpenTelemetry") {
+        Add distributed tracing, metrics, and system metrics to the tutorial app using OpenTelemetry,
+        and visualize them with Grafana.
+    }
+
+    @Section(title: "Add telemetry dependencies") {
+        @ContentAndMedia {
+            Add the OpenTelemetry and system metrics packages to the project.
+        }
+
+        @Steps {
+            @Step {
+                **Add** the telemetry dependencies to `Package.swift`.
+
+                Add `swift-metrics`, `swift-distributed-tracing`, `swift-otel`, and `swift-system-metrics`
+                to the package dependencies and target products.
+
+                @Code(name: "Package.swift", file: 4-package.0.swift, previousFile: 3-package.0.swift)
+            }
+        }
+    }
+
+    @Section(title: "Configure OpenTelemetry") {
+        @ContentAndMedia {
+            Configure OpenTelemetry to export metrics and traces while keeping logs
+            in the console. Metrics and traces are sent to an external collector via OTLP;
+            logs continue to print to the terminal as before.
+        }
+
+        @Steps {
+            @Step {
+                **Add** the new imports to `Telemetry.swift`.
+
+                Import `Metrics`, `OTel`, `ServiceLifecycle`, `SystemMetrics`, and `Tracing`.
+                These provide the APIs for metrics collection, the swift-otel library
+                for exporting telemetry in the OpenTelemetry data format,
+                service lifecycle management, system-level metrics, and distributed tracing.
+
+                @Code(name: "Telemetry.swift", file: 4-telemetry.0.swift, previousFile: 1-telemetry.0.swift)
+            }
+
+            @Step {
+                **Replace** the `configureTelemetryServices` function with `configureTelemetry`.
+
+                The console logger stays — logs keep printing to the terminal as before.
+                On top of that, the function creates OpenTelemetry backends for metrics and
+                tracing that export data via OTLP. It registers the tracing backend globally
+                so we can set up Vapor tracing later. It also starts
+                a `SystemMetricsMonitor` that automatically collects CPU, memory, and
+                process-level metrics. All OTel services are combined into a `ServiceGroup`
+                for coordinated lifecycle management.
+
+                @Code(name: "Telemetry.swift", file: 4-telemetry.1.swift, previousFile: 4-telemetry.0.swift)
+            }
+        }
+    }
+
+    @Section(title: "Wire up the entry point and server") {
+        @ContentAndMedia {
+            Update the entry point to integrate the telemetry service into the application lifecycle,
+            and add HTTP tracing middleware to the server.
+        }
+
+        @Steps {
+            @Step {
+                **Edit** `Entrypoint.swift`
+
+                Update the telemetry call to use the new function that returns a logger, telemetry service,
+                and metrics factory. Add the telemetry service to the `ServiceGroup` so that it starts and
+                stops alongside the server. Wrap `serviceGroup.run()` with `withMetricsFactory` so that
+                metrics created during execution use the OTel exporter.
+
+                @Code(name: "Entrypoint.swift", file: 4-entrypoint.0.swift, previousFile: 3-entrypoint.1.swift)
+            }
+
+            @Step {
+                **Edit** `ServerService.swift`
+
+                Add Vapor's `TracingMiddleware` to automatically create a trace span for every HTTP request.
+                Enable `traceAutoPropagation` so that trace context is extracted from incoming request headers
+                and propagated to outgoing calls.
+
+                @Code(name: "ServerService.swift", file: 4-serverservice.0.swift, previousFile: 3-serverservice.1.swift)
+            }
+        }
+    }
+
+    @Section(title: "Set up the observability stack") {
+        @ContentAndMedia {
+            Add a Grafana container to the Docker Compose setup to collect and visualize
+            traces and metrics via the OpenTelemetry Protocol (OTLP).
+        }
+
+        @Steps {
+            @Step {
+                **Edit** `docker-compose.yaml`
+
+                Add a `grafana` service using the `grafana/otel-lgtm` image, which bundles Grafana,
+                Tempo (traces), and Prometheus (metrics). Also add OTLP environment variables to the
+                `web` service so the app knows where to export telemetry.
+
+                @Code(name: "docker-compose.yaml", file: 4-docker-compose.0.yaml, previousFile: 3-docker-compose.0.yaml)
+            }
+        }
+    }
+
+    @Section(title: "Run and observe") {
+        @ContentAndMedia {
+            Start the observability stack, run the app, and view traces and metrics in Grafana.
+        }
+
+        @Steps {
+            @Step {
+                **Run** `% docker compose up postgres grafana`
+
+                Start PostgreSQL and Grafana in a terminal.
+
+                @Code(name: "Terminal 1", file: 4-bash.0.txt)
+            }
+
+            @Step {
+                **Run** the app with OpenTelemetry export configured.
+
+                Set the OTLP exporter environment variables and start the server.
+
+                @Code(name: "Terminal 2", file: 4-bash.1.txt)
+            }
+
+            @Step {
+                **Make** some requests to generate traces.
+
+                Create and list TODOs to generate HTTP trace data.
+
+                @Code(name: "Terminal 3", file: 4-bash-curl.0.txt)
+            }
+
+            @Step {
+                **Open** Grafana to explore traces and metrics.
+
+                Navigate to `http://localhost:3000` in your browser.
+                Use the Explore view to see HTTP request traces in Tempo
+                and system metrics in Prometheus.
+
+                @Code(name: "Browser", file: 4-bash.2.txt)
+            }
+        }
+    }
+}
