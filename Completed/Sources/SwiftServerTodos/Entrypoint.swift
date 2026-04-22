@@ -1,4 +1,5 @@
 import Configuration
+import Metrics
 import ServiceLifecycle
 import Vapor
 
@@ -8,11 +9,11 @@ struct Entrypoint {
         let config = ConfigReader(provider: EnvironmentVariablesProvider())
 
         // Configure telemetry
-        try await configureTelemetryServices(config)
+        let (logger, telemetryService, metricsFactory) = try await configureTelemetry(config)
 
         // Create the server
         let serverConfig = config.scoped(to: "address")
-        let app = try await Vapor.Application.make()
+        let app = try await Vapor.Application.make(logger: logger)
         app.http.server.configuration.address = .hostname(
             serverConfig.string(forKey: "address", default: "0.0.0.0"),
             port: serverConfig.int(forKey: "port", default: 8080)
@@ -24,14 +25,16 @@ struct Entrypoint {
         // Configure the server
         let serverService = try await configureServer(app)
 
-        // Start the service group, which spins up all the service above
-        let services: [Service] = [serverService]
+        // Start the service group, which spins up all the services above
+        let services: [Service] = [telemetryService, serverService]
         let serviceGroup = ServiceGroup(
             services: services,
             gracefulShutdownSignals: [.sigint],
             cancellationSignals: [.sigterm],
-            logger: app.logger
+            logger: logger
         )
-        try await serviceGroup.run()
+        try await withMetricsFactory(metricsFactory) {
+            try await serviceGroup.run()
+        }
     }
 }

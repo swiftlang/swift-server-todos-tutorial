@@ -18,6 +18,10 @@ let package = Package(
 
         // Telemetry
         .package(url: "https://github.com/apple/swift-log", from: "1.5.2"),
+        .package(url: "https://github.com/apple/swift-metrics", from: "2.5.0"),
+        .package(url: "https://github.com/apple/swift-distributed-tracing", from: "1.2.0"),
+        .package(url: "https://github.com/swift-otel/swift-otel", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-system-metrics", from: "1.2.1"),
 
         // Database
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
@@ -36,6 +40,10 @@ let package = Package(
 
                 // Telemetry
                 .product(name: "Logging", package: "swift-log"),
+                .product(name: "Metrics", package: "swift-metrics"),
+                .product(name: "Tracing", package: "swift-distributed-tracing"),
+                .product(name: "OTel", package: "swift-otel"),
+                .product(name: "SystemMetrics", package: "swift-system-metrics"),
 
                 // Database
                 .product(name: "Fluent", package: "fluent"),

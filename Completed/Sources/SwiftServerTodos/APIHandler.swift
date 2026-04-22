@@ -1,19 +1,19 @@
 import Fluent
-import HTTPTypes
 import Foundation
+import HTTPTypes
 import OpenAPIRuntime
 
 struct APIHandler: APIProtocol {
-    
+
     var db: Database
-    
+
     func listTODOs(
         _ input: Operations.ListTODOs.Input
     ) async throws -> Operations.ListTODOs.Output {
         // Exercise:
         // 1. Fetch todos from database
         let dbTodos = try await db.query(DB.TODO.self).all()
-        
+
         // 2. Serialize them to the TODO Detail array
         let apiTodos = try dbTodos.map { todo in
             Components.Schemas.TODODetail(
@@ -21,10 +21,10 @@ struct APIHandler: APIProtocol {
                 contents: todo.contents
             )
         }
-        
+
         return .ok(.init(body: .json(.init(items: apiTodos))))
     }
-    
+
     func createTODO(
         _ input: Operations.CreateTODO.Input
     ) async throws -> Operations.CreateTODO.Output {
@@ -55,17 +55,16 @@ struct APIHandler: APIProtocol {
             )
         }
     }
-    
+
     func getTODODetail(
         _ input: Operations.GetTODODetail.Input
     ) async throws -> Operations.GetTODODetail.Output {
         .undocumented(statusCode: 500, .init())
     }
-    
+
     func deleteTODO(
         _ input: Operations.DeleteTODO.Input
     ) async throws -> Operations.DeleteTODO.Output {
         .undocumented(statusCode: 500, .init())
     }
 }
-
