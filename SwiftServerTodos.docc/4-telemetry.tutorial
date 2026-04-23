@@ -24,7 +24,7 @@
     @Section(title: "Configure OpenTelemetry") {
         @ContentAndMedia {
             Configure OpenTelemetry to export metrics and traces while keeping logs
-            in the console. Metrics and traces are sent to an external collector via OTLP;
+            in the console. Metrics and traces are sent to an external collector via the Open Telemetry Protocol, or OTLP;
             logs continue to print to the terminal as before.
         }
 
