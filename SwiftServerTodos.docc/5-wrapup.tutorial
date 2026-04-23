@@ -13,6 +13,7 @@
     1. Started with a simple Swift `HTTP` service using Vapor that returned a pre-generated response to an `HTTP` `GET` request.
     2. Leveraged `OpenAPI` to generate the routes and handlers.
     3. Added in `Fluent` to interact with a PostgreSQL database.
+    4. Integrated `OpenTelemetry` for distributed tracing and metrics, with a Grafana dashboard to visualize them.
 
     This should give you a taste of how to write `HTTP` services with Swift!
 
@@ -25,6 +26,11 @@
     * [Swift Log](https://swiftpackageindex.com/apple/swift-log/1.6.3/documentation/logging) to add basic logging to the application.
     * [ServiceLifecycle](https://github.com/swift-server/swift-service-lifecycle/tree/main) library to coordinate services and signaling.
     * [Swift Configuration](https://github.com/apple/swift-configuration/tree/main) library to read the application configuration.
+    * [Swift OTel](https://github.com/swift-otel/swift-otel) for OpenTelemetry integration (tracing and metrics export).
+    * [Swift Metrics](https://github.com/apple/swift-metrics) for the metrics API.
+    * [Swift Distributed Tracing](https://github.com/apple/swift-distributed-tracing) for the tracing API.
+    * [Swift System Metrics](https://github.com/apple/swift-system-metrics) for automatic CPU, memory, and process metrics.
+    * [Grafana OTEL LGTM](https://github.com/grafana/docker-otel-lgtm) for local observability visualization.
     * [docker compose](https://docs.docker.com/compose/) to help build the swift service and connect to PostgreSQL.
 
     ### Where do I go from here?

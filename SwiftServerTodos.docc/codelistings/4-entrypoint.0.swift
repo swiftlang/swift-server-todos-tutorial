@@ -25,7 +25,7 @@ struct Entrypoint {
         // Configure the server
         let serverService = try await configureServer(app)
 
-        // Start the service group, which spins up all the services above
+        // Start the service group, which spins up all the service above
         let services: [Service] = [telemetryService, serverService]
         let serviceGroup = ServiceGroup(
             services: services,

@@ -22,6 +22,7 @@
         @TutorialReference(tutorial: "doc:1-introduction")
         @TutorialReference(tutorial: "doc:2-openapi")
         @TutorialReference(tutorial: "doc:3-database")
+        @TutorialReference(tutorial: "doc:4-telemetry")
     }
 
     @Chapter(name: "Review and next steps") {
@@ -29,6 +30,6 @@
         
         @Image(source: "swift.svg", alt: "placeholder")
 
-        @TutorialReference(tutorial: "doc:4-wrapup")
+        @TutorialReference(tutorial: "doc:5-wrapup")
     }
 }
