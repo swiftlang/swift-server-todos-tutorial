@@ -1,6 +1,6 @@
 @Tutorial(time: 10) {
     @Intro(title: "Add observability with OpenTelemetry") {
-        Add distributed tracing, metrics, and system metrics to the tutorial app using OpenTelemetry,
+        Add distributed tracing, service metrics, and system metrics to the tutorial app using OpenTelemetry,
         and visualize them with Grafana.
     }
 
