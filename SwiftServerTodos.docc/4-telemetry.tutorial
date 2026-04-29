@@ -45,7 +45,7 @@
 
                 The console logger stays — logs keep printing to the terminal as before.
                 On top of that, the function creates OpenTelemetry backends for metrics and
-                tracing that export data via OTLP. It registers the tracing backend globally
+                tracing that export data via OTLP. It registers the metrics and tracing backends globally
                 to set up Vapor tracing later. It also starts
                 a `SystemMetricsMonitor` that automatically collects CPU, memory, and
                 process-level metrics. All OTel services are combined into a `ServiceGroup`
@@ -66,10 +66,10 @@
             @Step {
                 **Edit** `Entrypoint.swift`
 
-                Update the telemetry call to use the new function that returns a logger, telemetry service,
-                and metrics factory. Add the telemetry service to the `ServiceGroup` so that it starts and
-                stops alongside the server. Wrap `serviceGroup.run()` in the closure from `withMetricsFactory` so that
-                metrics created during execution use the OTel exporter.
+                Update the telemetry call to use the new function that returns a logger and telemetry service.
+                Add the telemetry service to the `ServiceGroup` so that it starts and
+                stops alongside the server. Because services start in array order and shut down in
+                reverse, placing telemetry first keeps it running while the server drains.
 
                 @Code(name: "Entrypoint.swift", file: 4-entrypoint.0.swift, previousFile: 3-entrypoint.1.swift)
             }

@@ -8,7 +8,7 @@ import SystemMetrics
 import Tracing
 import Vapor
 
-func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Service, any MetricsFactory) {
+func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Service) {
     // Logs stay in the console — configure the Vapor console logger.
     let level = config.scoped(to: "log")
         .string(forKey: "level")
@@ -29,7 +29,8 @@ func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Se
     let otelMetricsBackend = try OTel.makeMetricsBackend(configuration: otelConfig)
     let otelTracingBackend = try OTel.makeTracingBackend(configuration: otelConfig)
 
-    // Register the tracing backend globally so Vapor's TracingMiddleware can create spans.
+    // Register the metrics and tracing backends globally.
+    MetricsSystem.bootstrap(otelMetricsBackend.factory)
     InstrumentationSystem.bootstrap(otelTracingBackend.factory)
 
     // Collect system-level metrics (CPU, memory, file descriptors, etc.).
@@ -46,7 +47,7 @@ func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Se
             systemMetricsMonitor,
         ], logger: logger)
 
-    return (logger, telemetryService, otelMetricsBackend.factory)
+    return (logger, telemetryService)
 }
 
 extension Logger {
