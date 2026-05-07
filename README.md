@@ -88,7 +88,7 @@ The complete API specification is available in [`Sources/SwiftServerTodos/openap
 
 ### Alternative frameworks
 * [Hummingbird](https://hummingbird.codes) – Alternative Swift web framework.
-* [Swift GRPC](https://github.com/grpc/grpc-swift) – gRPC framework.
+* [gRPC Swift](https://github.com/grpc/grpc-swift-2) – gRPC framework.
 
 ### Example projects
 * [Vapor server example](https://github.com/apple/swift-openapi-generator/tree/main/Examples/hello-world-vapor-server-example)
