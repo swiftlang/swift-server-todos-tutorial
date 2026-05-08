@@ -128,7 +128,7 @@
             }
 
             @Step {
-                **Make** some requests to generate traces.
+                **Generate** some traces by making requests to the service.
 
                 Create and list TODOs to generate HTTP trace data.
 
