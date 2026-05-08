@@ -25,8 +25,8 @@
         @ContentAndMedia {
             Configure OpenTelemetry to export logs, metrics, and traces.
             Logs fan out to both the terminal and an external collector via
-            the OpenTelemetry Protocol (OTLP); metrics and traces are sent to
-            the same OTLP collector.
+            the OpenTelemetry Protocol (OTLP), while metrics and traces are
+            sent to the same OTLP collector.
         }
 
         @Steps {
@@ -90,7 +90,7 @@
     @Section(title: "Set up the observability stack") {
         @ContentAndMedia {
             Add a Grafana container to the Docker Compose setup to collect and visualize
-            traces and metrics via the OpenTelemetry Protocol (OTLP).
+            logs, traces, and metrics via the OpenTelemetry Protocol (OTLP).
         }
 
         @Steps {
@@ -98,8 +98,8 @@
                 **Edit** `docker-compose.yaml`
 
                 Add a `grafana` service using the `grafana/otel-lgtm` image, which bundles Grafana,
-                Tempo (traces), and Prometheus (metrics). Also add OTLP environment variables to the
-                `web` service so the app knows where to export telemetry.
+                Loki (logs), Tempo (traces), and Prometheus (metrics). Also add OTLP environment
+                variables to the `web` service so the app knows where to export telemetry.
 
                 @Code(name: "docker-compose.yaml", file: 4-docker-compose.0.yaml, previousFile: 3-docker-compose.0.yaml)
             }
@@ -108,42 +108,79 @@
 
     @Section(title: "Run and observe") {
         @ContentAndMedia {
-            Start the observability stack, run the app, and view traces and metrics in Grafana.
+            Start the observability stack, run the app, and view logs, traces, and metrics in Grafana.
         }
 
         @Steps {
             @Step {
-                **Run** `% docker compose up postgres grafana`
+                **Restart** the infrastructure to add Grafana alongside PostgreSQL.
 
-                Start PostgreSQL and Grafana in a terminal.
+                In the terminal that was already running `docker compose up postgres`, press
+                `Ctrl-C` and relaunch with both services. Postgres reuses the same container, so
+                the TODOs you created in the previous chapter are still there.
 
-                @Code(name: "Terminal 1", file: 4-bash.0.txt)
+                @Code(name: "Terminal", file: 4-bash.0.txt)
             }
 
             @Step {
-                **Run** the app with OpenTelemetry export configured.
+                **Restart** the app with OpenTelemetry export configured.
 
-                Set the OTLP exporter environment variables and start the server.
+                In the terminal running `swift run SwiftServerTodos`, press `Ctrl-C`, then relaunch
+                with the OTLP exporter environment variables set. The exporter points at Grafana's
+                OTLP endpoint on the host (port `4317`).
 
-                @Code(name: "Terminal 2", file: 4-bash.1.txt)
+                @Code(name: "Terminal 1", file: 4-bash.1.txt)
             }
 
             @Step {
                 **Generate** some traces by making requests to the service.
 
-                Create and list TODOs to generate HTTP trace data.
+                In the existing `curl` terminal, create and list TODOs to generate HTTP trace data.
 
-                @Code(name: "Terminal 3", file: 4-bash-curl.0.txt)
+                @Code(name: "Terminal 2", file: 4-bash-curl.0.txt)
             }
 
             @Step {
-                **Open** Grafana to explore traces and metrics.
+                **Open** Grafana in your browser.
 
-                Navigate to `http://localhost:3000` in your browser.
-                Use the Explore view to see HTTP request traces in Tempo
-                and system metrics in Prometheus.
+                Navigate to `http://localhost:3000` and open the **Explore** view. The
+                `grafana/otel-lgtm` image preconfigures three data sources you can switch
+                between at the top of the page — Loki for logs, Tempo for traces, and
+                Prometheus for metrics.
 
-                @Code(name: "Browser", file: 4-bash.2.txt)
+                @Code(name: "Browser", file: 4-bash.2.0.txt)
+            }
+
+            @Step {
+                **Switch** to Loki to explore logs.
+
+                Run `{service_name="SwiftServerTodos"}` to see the log lines the app just
+                emitted. Each entry carries `trace_id` and `span_id` fields, so you can pivot
+                from a log into the trace it belongs to.
+
+                @Code(name: "Browser", file: 4-bash.2.1.txt)
+            }
+
+            @Step {
+                **Switch** to Tempo to explore traces.
+
+                In the Search tab, pick `SwiftServerTodos` as the service name and run the
+                query to list recent HTTP requests. Click a trace to expand the span tree —
+                the Vapor request span wraps its Fluent child spans — and use the
+                **Logs for this span** link to jump back to Loki.
+
+                @Code(name: "Browser", file: 4-bash.2.2.txt)
+            }
+
+            @Step {
+                **Switch** to Prometheus to explore metrics.
+
+                Try `process_cpu_seconds_total`, `process_resident_memory_bytes`, and
+                `process_virtual_memory_bytes` to see the system metrics emitted by
+                `SystemMetricsMonitor`. Use the Metrics Explorer to browse everything else the
+                app exports.
+
+                @Code(name: "Browser", file: 4-bash.2.3.txt)
             }
         }
     }

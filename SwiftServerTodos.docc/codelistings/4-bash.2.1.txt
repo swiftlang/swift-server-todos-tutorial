@@ -1,0 +1,9 @@
+Select "Loki" from the data source drop-down.
+
+In the query box, enter:
+
+  {service_name="SwiftServerTodos"}
+
+Press "Run query". Every log line the app emitted shows up here,
+attributed to the service. Expand any line to see its fields — trace_id
+and span_id point back to the trace in Tempo that produced the log.

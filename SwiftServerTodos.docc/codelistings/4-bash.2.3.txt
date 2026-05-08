@@ -1,0 +1,11 @@
+Select "Prometheus" from the data source drop-down.
+
+In the query box, try any of the system metrics emitted by
+SystemMetricsMonitor:
+
+  process_cpu_seconds_total
+  process_resident_memory_bytes
+  process_virtual_memory_bytes
+
+The "Metrics Explorer" button next to the query field lets you browse
+everything else the app exports.
