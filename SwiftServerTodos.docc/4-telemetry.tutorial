@@ -1,7 +1,7 @@
 @Tutorial(time: 10) {
     @Intro(title: "Add observability with OpenTelemetry") {
-        Add distributed tracing, service metrics, and system metrics to the tutorial app using OpenTelemetry,
-        and visualize them with Grafana.
+        Export logs, metrics, and traces from the tutorial app using
+        OpenTelemetry, and visualize them with Grafana.
     }
 
     @Section(title: "Add telemetry dependencies") {
@@ -23,9 +23,10 @@
 
     @Section(title: "Configure OpenTelemetry") {
         @ContentAndMedia {
-            Configure OpenTelemetry to export metrics and traces while keeping logs
-            in the console. Metrics and traces are sent to an external collector via the Open Telemetry Protocol, or OTLP;
-            logs continue to print to the terminal as before.
+            Configure OpenTelemetry to export logs, metrics, and traces.
+            Logs fan out to both the terminal and an external collector via
+            the OpenTelemetry Protocol (OTLP); metrics and traces are sent to
+            the same OTLP collector.
         }
 
         @Steps {
@@ -43,13 +44,13 @@
             @Step {
                 **Expand** the `configureTelemetry` function to set up OpenTelemetry.
 
-                The console logger stays — logs keep printing to the terminal as before.
-                On top of that, the function creates OpenTelemetry backends for metrics and
-                tracing that export data via OTLP. It registers the metrics and tracing backends globally
-                to set up Vapor tracing later. It also starts
-                a `SystemMetricsMonitor` that automatically collects CPU, memory, and
-                process-level metrics. All OTel services are combined into a `ServiceGroup`
-                for coordinated lifecycle management.
+                The function creates OpenTelemetry backends for logs, metrics, and tracing that export
+                data via OTLP. It bootstraps the logging system with a `MultiplexLogHandler` so every
+                log line fans out to both the Vapor console logger and the OTel exporter. It registers
+                the metrics and tracing backends globally to set up Vapor tracing later, and starts a
+                `SystemMetricsMonitor` that automatically collects CPU, memory, and process-level
+                metrics. All OTel services are combined into a `ServiceGroup` for coordinated lifecycle
+                management.
 
                 @Code(name: "Telemetry.swift", file: 4-telemetry.1.swift, previousFile: 4-telemetry.0.swift)
             }

@@ -9,29 +9,32 @@ import Tracing
 import Vapor
 
 func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Service) {
-    // Logs stay in the console — configure the Vapor console logger.
     let level = config.scoped(to: "log")
         .string(forKey: "level")
         .flatMap { Logger.Level.init(rawValue: $0) } ?? .info
-    LoggingSystem.bootstrap { label in
-        ConsoleLogger(label: label, console: Terminal(), level: level)
-    }
 
-    let logger = Logger(label: "SwiftServerTodos")
-
-    // Metrics and traces are exported via OpenTelemetry (OTLP).
+    // Logs, metrics, and traces are exported via OpenTelemetry (OTLP).
+    // The OTel diagnostic logger is left as default (stderr) so OTel's own
+    // internal logs don't recurse back through the multiplexed handler below.
     var otelConfig = OTel.Configuration.default
-    otelConfig.logs.enabled = false
     otelConfig.serviceName = "SwiftServerTodos"
-    otelConfig.diagnosticLogger = .custom(logger)
 
-    // Create separate metrics and tracing backends.
+    // Create the OTel backends.
+    let otelLoggingBackend = try OTel.makeLoggingBackend(configuration: otelConfig)
     let otelMetricsBackend = try OTel.makeMetricsBackend(configuration: otelConfig)
     let otelTracingBackend = try OTel.makeTracingBackend(configuration: otelConfig)
 
-    // Register the metrics and tracing backends globally.
+    // Fan logs out to both the Vapor console logger and the OTel exporter.
+    LoggingSystem.bootstrap { label in
+        MultiplexLogHandler([
+            ConsoleLogger(label: label, console: Terminal(), level: level),
+            otelLoggingBackend.factory(label),
+        ])
+    }
     MetricsSystem.bootstrap(otelMetricsBackend.factory)
     InstrumentationSystem.bootstrap(otelTracingBackend.factory)
+
+    let logger = Logger(label: "SwiftServerTodos")
 
     // Collect system-level metrics (CPU, memory, file descriptors, etc.).
     let systemMetricsMonitor = SystemMetricsMonitor(
@@ -42,6 +45,7 @@ func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Se
     // Combine all OTel services so they start and stop together.
     let telemetryService = ServiceGroup(
         services: [
+            otelLoggingBackend.service,
             otelMetricsBackend.service,
             otelTracingBackend.service,
             systemMetricsMonitor,
