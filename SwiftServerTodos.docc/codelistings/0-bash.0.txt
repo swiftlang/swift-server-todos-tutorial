@@ -1,2 +1,2 @@
 % swift --version
-Apple Swift version 6.1 (swift-6.1-RELEASE)
+Apple Swift version 6.3 (swift-6.3-RELEASE)
