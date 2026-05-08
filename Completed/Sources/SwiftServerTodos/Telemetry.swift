@@ -25,12 +25,21 @@ func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Se
     let otelTracingBackend = try OTel.makeTracingBackend(configuration: otelConfig)
 
     // Fan logs out to both the Vapor console logger and the OTel exporter.
-    LoggingSystem.bootstrap { label in
-        MultiplexLogHandler([
-            ConsoleLogger(label: label, console: Terminal(), level: level),
-            otelLoggingBackend.factory(label),
-        ])
-    }
+    // The OTel metadata provider attaches `trace_id` and `span_id` from the
+    // active span, so logs emitted during a traced request can be correlated
+    // with their trace in Grafana.
+    LoggingSystem.bootstrap(
+        { label, metadataProvider in
+            MultiplexLogHandler(
+                [
+                    ConsoleLogger(label: label, console: Terminal(), level: level),
+                    otelLoggingBackend.factory(label),
+                ],
+                metadataProvider: metadataProvider
+            )
+        },
+        metadataProvider: OTel.makeLoggingMetadataProvider()
+    )
     MetricsSystem.bootstrap(otelMetricsBackend.factory)
     InstrumentationSystem.bootstrap(otelTracingBackend.factory)
 

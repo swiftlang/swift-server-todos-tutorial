@@ -46,11 +46,12 @@
 
                 The function creates OpenTelemetry backends for logs, metrics, and tracing that export
                 data via OTLP. It bootstraps the logging system with a `MultiplexLogHandler` so every
-                log line fans out to both the Vapor console logger and the OTel exporter. It registers
-                the metrics and tracing backends globally to set up Vapor tracing later, and starts a
-                `SystemMetricsMonitor` that automatically collects CPU, memory, and process-level
-                metrics. All OTel services are combined into a `ServiceGroup` for coordinated lifecycle
-                management.
+                log line fans out to both the Vapor console logger and the OTel exporter, and installs
+                an OTel metadata provider so logs emitted during a traced request carry `trace_id` and
+                `span_id` from the active span. It registers the metrics and tracing backends globally
+                to set up Vapor tracing later, and starts a `SystemMetricsMonitor` that automatically
+                collects CPU, memory, and process-level metrics. All OTel services are combined into a
+                `ServiceGroup` for coordinated lifecycle management.
 
                 @Code(name: "Telemetry.swift", file: 4-telemetry.1.swift, previousFile: 4-telemetry.0.swift)
             }
@@ -83,6 +84,17 @@
                 and propagated to outgoing calls.
 
                 @Code(name: "ServerService.swift", file: 4-serverservice.0.swift, previousFile: 3-serverservice.1.swift)
+            }
+
+            @Step {
+                **Edit** `APIHandler.swift`
+
+                Log inside `listTODOs` and `createTODO` using the `Logger.current` task-local that
+                `RequestLoggerInjectionMiddleware` set. Because these log lines run inside the span
+                `TracingMiddleware` starts, the metadata provider attaches `trace_id` and `span_id` —
+                giving you a concrete log line per request that correlates with its trace in Grafana.
+
+                @Code(name: "APIHandler.swift", file: 4-apihandler.0.swift, previousFile: 3-apihandler.4.swift)
             }
         }
     }
@@ -154,11 +166,12 @@
             @Step {
                 **Switch** to Loki to explore logs.
 
-                Run `{service_name="SwiftServerTodos"}` to see the log lines the app just
-                emitted. Each entry carries `trace_id` and `span_id` fields, so you can pivot
-                from a log into the trace it belongs to.
+                Pick `SwiftServerTodos` as the service name to see the log lines the app just
+                emitted. Log lines written while a request was being handled carry `trace_id`
+                and `span_id` fields — expand a line to see them, and use the trace ID link
+                to jump straight to the trace in Tempo.
 
-                @Code(name: "Browser", file: 4-bash.2.1.txt)
+                @Code(name: "Browser — logs", file: 4-bash.2.1.txt)
             }
 
             @Step {
@@ -169,7 +182,7 @@
                 the Vapor request span wraps its Fluent child spans — and use the
                 **Logs for this span** link to jump back to Loki.
 
-                @Code(name: "Browser", file: 4-bash.2.2.txt)
+                @Code(name: "Browser — traces", file: 4-bash.2.2.txt)
             }
 
             @Step {
@@ -180,7 +193,7 @@
                 `SystemMetricsMonitor`. Use the Metrics Explorer to browse everything else the
                 app exports.
 
-                @Code(name: "Browser", file: 4-bash.2.3.txt)
+                @Code(name: "Browser — metrics", file: 4-bash.2.3.txt)
             }
         }
     }

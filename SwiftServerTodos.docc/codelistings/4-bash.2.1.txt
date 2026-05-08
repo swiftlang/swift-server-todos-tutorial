@@ -4,6 +4,10 @@ In the query box, enter:
 
   {service_name="SwiftServerTodos"}
 
-Press "Run query". Every log line the app emitted shows up here,
-attributed to the service. Expand any line to see its fields — trace_id
-and span_id point back to the trace in Tempo that produced the log.
+Press "Run query". Every log line the app emitted shows up here. Lines
+written while a request was being handled carry trace_id and span_id
+fields — expand a line to see them. Clicking the trace_id jumps straight
+to the corresponding trace in Tempo.
+
+Startup and migration logs are emitted before any request span exists, so
+they don't have a trace_id.
