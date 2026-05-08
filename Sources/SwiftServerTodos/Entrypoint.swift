@@ -8,7 +8,7 @@ struct Entrypoint {
         let config = ConfigReader(provider: EnvironmentVariablesProvider())
 
         // Configure telemetry
-        try await configureTelemetryServices(config)
+        try await configureTelemetry(config)
 
         // Create the server
         let serverConfig = config.scoped(to: "address")

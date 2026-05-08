@@ -8,7 +8,7 @@ import SystemMetrics
 import Tracing
 import Vapor
 
-func configureTelemetryServices(_ config: ConfigReader) async throws {
+func configureTelemetry(_ config: ConfigReader) async throws {
     let level = config.scoped(to: "log")
         .string(forKey: "level")
         .flatMap { Logger.Level.init(rawValue: $0) } ?? .info

@@ -41,7 +41,7 @@
             }
 
             @Step {
-                **Replace** the `configureTelemetryServices` function with `configureTelemetry`.
+                **Expand** the `configureTelemetry` function to set up OpenTelemetry.
 
                 The console logger stays — logs keep printing to the terminal as before.
                 On top of that, the function creates OpenTelemetry backends for metrics and
