@@ -102,7 +102,7 @@
     @Section(title: "Set up the observability stack") {
         @ContentAndMedia {
             Add a Grafana container to the Docker Compose setup to collect and visualize
-            logs, traces, and metrics via the OpenTelemetry Protocol (OTLP).
+            logs, metrics, and traces via the OpenTelemetry Protocol (OTLP).
         }
 
         @Steps {
@@ -120,7 +120,7 @@
 
     @Section(title: "Run and observe") {
         @ContentAndMedia {
-            Start the observability stack, run the app, and view logs, traces, and metrics in Grafana.
+            Start the observability stack, run the app, and view logs, metrics, and traces in Grafana.
         }
 
         @Steps {
