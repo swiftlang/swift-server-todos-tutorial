@@ -1,13 +1,13 @@
 Select "Loki" from the data source drop-down.
 
-In the query box, enter:
+Switch from Builder to Code query builder and enter:
 
   {service_name="SwiftServerTodos"}
 
 Press "Run query". Every log line the app emitted shows up here. Lines
-written while a request was being handled carry trace_id and span_id
-fields — expand a line to see them. Clicking the trace_id jumps straight
+written while a request was being handled carry `trace_id` and `span_id`
+fields — expand a line to see them. Clicking the `trace_id` jumps straight
 to the corresponding trace in Tempo.
 
 Startup and migration logs are emitted before any request span exists, so
-they don't have a trace_id.
+they don't have a `trace_id`.
