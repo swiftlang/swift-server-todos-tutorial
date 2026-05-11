@@ -1,0 +1,200 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Add observability with OpenTelemetry") {
+        Export logs, metrics, and traces from the tutorial app using
+        OpenTelemetry, and visualize them with Grafana.
+    }
+
+    @Section(title: "Add telemetry dependencies") {
+        @ContentAndMedia {
+            Add the OpenTelemetry and system metrics packages to the project.
+        }
+
+        @Steps {
+            @Step {
+                **Add** the telemetry dependencies to `Package.swift`.
+
+                Add `swift-metrics`, `swift-distributed-tracing`, `swift-otel`, and `swift-system-metrics`
+                to the package dependencies and target products.
+
+                @Code(name: "Package.swift", file: 4-package.0.swift, previousFile: 3-package.0.swift)
+            }
+        }
+    }
+
+    @Section(title: "Configure OpenTelemetry") {
+        @ContentAndMedia {
+            Configure OpenTelemetry to export logs, metrics, and traces.
+            Logs fan out to both the terminal and an external collector via
+            the OpenTelemetry Protocol (OTLP), while metrics and traces are
+            sent to the same OTLP collector.
+        }
+
+        @Steps {
+            @Step {
+                **Add** the new imports to `Telemetry.swift`.
+
+                Import `Metrics`, `OTel`, `ServiceLifecycle`, `SystemMetrics`, and `Tracing`.
+                These provide the APIs for metrics collection, the swift-otel library
+                for exporting telemetry in the OpenTelemetry data format,
+                service lifecycle management, system-level metrics, and distributed tracing.
+
+                @Code(name: "Telemetry.swift", file: 4-telemetry.0.swift, previousFile: 1-telemetry.0.swift)
+            }
+
+            @Step {
+                **Expand** the `configureTelemetry` function to set up OpenTelemetry.
+
+                The function creates OpenTelemetry backends for logs, metrics, and tracing that export
+                data via OTLP. It bootstraps the logging system with a `MultiplexLogHandler` so every
+                log line fans out to both the Vapor console logger and the OTel exporter, and installs
+                an OTel metadata provider so logs emitted during a traced request carry `trace_id` and
+                `span_id` from the active span. It registers the metrics and tracing backends globally
+                to set up Vapor tracing later, and starts a `SystemMetricsMonitor` that automatically
+                collects CPU, memory, and process-level metrics. All OTel services are combined into a
+                `ServiceGroup` for coordinated lifecycle management.
+
+                @Code(name: "Telemetry.swift", file: 4-telemetry.1.swift, previousFile: 4-telemetry.0.swift)
+            }
+        }
+    }
+
+    @Section(title: "Wire up the entry point and server") {
+        @ContentAndMedia {
+            Update the entry point to integrate the telemetry service into the application lifecycle,
+            and add HTTP tracing middleware to the server.
+        }
+
+        @Steps {
+            @Step {
+                **Edit** `Entrypoint.swift`
+
+                Update the telemetry call to use the new function that returns a logger and telemetry service.
+                Add the telemetry service to the `ServiceGroup` so that it starts and
+                stops alongside the server. Because services start in array order and shut down in
+                reverse, placing telemetry first keeps it running while the server drains.
+
+                @Code(name: "Entrypoint.swift", file: 4-entrypoint.0.swift, previousFile: 3-entrypoint.1.swift)
+            }
+
+            @Step {
+                **Edit** `ServerService.swift`
+
+                Add Vapor's `TracingMiddleware` to automatically create a trace span for every HTTP request.
+                Enable `traceAutoPropagation` so that trace context is extracted from incoming request headers
+                and propagated to outgoing calls.
+
+                @Code(name: "ServerService.swift", file: 4-serverservice.0.swift, previousFile: 3-serverservice.1.swift)
+            }
+
+            @Step {
+                **Edit** `APIHandler.swift`
+
+                Log inside `listTODOs` and `createTODO` using the `Logger.current` task-local that
+                `RequestLoggerInjectionMiddleware` set. Because these log lines run inside the span
+                `TracingMiddleware` starts, the metadata provider attaches `trace_id` and `span_id` —
+                giving you a concrete log line per request that correlates with its trace in Grafana.
+
+                @Code(name: "APIHandler.swift", file: 4-apihandler.0.swift, previousFile: 3-apihandler.4.swift)
+            }
+        }
+    }
+
+    @Section(title: "Set up the observability stack") {
+        @ContentAndMedia {
+            Add a Grafana container to the Docker Compose setup to collect and visualize
+            logs, metrics, and traces via the OpenTelemetry Protocol (OTLP).
+        }
+
+        @Steps {
+            @Step {
+                **Edit** `docker-compose.yaml`
+
+                Add a `grafana` service using the `grafana/otel-lgtm` image, which bundles Grafana,
+                Loki (logs), Tempo (traces), and Prometheus (metrics). Also add OTLP environment
+                variables to the `web` service so the app knows where to export telemetry.
+
+                @Code(name: "docker-compose.yaml", file: 4-docker-compose.0.yaml, previousFile: 3-docker-compose.0.yaml)
+            }
+        }
+    }
+
+    @Section(title: "Run and observe") {
+        @ContentAndMedia {
+            Start the observability stack, run the app, and view logs, metrics, and traces in Grafana.
+        }
+
+        @Steps {
+            @Step {
+                **Restart** the infrastructure to add Grafana alongside PostgreSQL.
+
+                In the terminal that was already running `docker compose up postgres`, press
+                `Ctrl-C` and relaunch with both services. Postgres reuses the same container, so
+                the TODOs you created in the previous chapter are still there.
+
+                @Code(name: "Terminal", file: 4-bash.0.txt)
+            }
+
+            @Step {
+                **Restart** the app with OpenTelemetry export configured.
+
+                In the terminal running `swift run SwiftServerTodos`, press `Ctrl-C`, then relaunch
+                with the OTLP exporter environment variables set. The exporter points at Grafana's
+                OTLP endpoint on the host (port `4317`).
+
+                @Code(name: "Terminal 1", file: 4-bash.1.txt)
+            }
+
+            @Step {
+                **Generate** some traces by making requests to the service.
+
+                In the existing `curl` terminal, create and list TODOs to generate HTTP trace data.
+
+                @Code(name: "Terminal 2", file: 4-bash-curl.0.txt)
+            }
+
+            @Step {
+                **Open** Grafana in your browser.
+
+                Navigate to `http://localhost:3000` and open the **Explore** view. The
+                `grafana/otel-lgtm` image preconfigures three data sources you can switch
+                between at the top of the page — Loki for logs, Tempo for traces, and
+                Prometheus for metrics.
+
+                @Code(name: "Browser", file: 4-bash.2.0.txt)
+            }
+
+            @Step {
+                **Switch** to Loki to explore logs.
+
+                Pick `SwiftServerTodos` as the service name to see the log lines the app just
+                emitted. Log lines written while a request was being handled carry `trace_id`
+                and `span_id` fields — expand a line to see them, and use the trace ID link
+                to jump straight to the trace in Tempo.
+
+                @Code(name: "Browser — logs", file: 4-bash.2.1.txt)
+            }
+
+            @Step {
+                **Switch** to Tempo to explore traces.
+
+                In the Search tab, pick `SwiftServerTodos` as the service name and run the
+                query to list recent HTTP requests. Click a trace to expand the span tree —
+                the Vapor request span wraps its Fluent child spans — and use the
+                **Logs for this span** link to jump back to Loki.
+
+                @Code(name: "Browser — traces", file: 4-bash.2.2.txt)
+            }
+
+            @Step {
+                **Switch** to Prometheus to explore metrics.
+
+                Try `process_cpu_seconds_total`, `process_resident_memory_bytes`, and
+                `process_virtual_memory_bytes` to see the system metrics emitted by
+                `SystemMetricsMonitor`. Use the Metrics Explorer to browse everything else the
+                app exports.
+
+                @Code(name: "Browser — metrics", file: 4-bash.2.3.txt)
+            }
+        }
+    }
+}

@@ -14,7 +14,7 @@
             @Step {
                 **Run** `% swift --version` 
 
-                Verify you have Swift version 6.1 or later installed. If not, upgrade now.  Instructions to install Swift can be found at [swift.org/install](http://swift.org/install).
+                Verify you have Swift version 6.3 or later installed. If not, upgrade now.  Instructions to install Swift can be found at [swift.org/install](http://swift.org/install).
 
                 @Code(name: "Terminal", file: "0-bash.0.txt")
             }

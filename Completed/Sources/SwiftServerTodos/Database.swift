@@ -12,7 +12,7 @@ func configureDatabase(app: Application, config: ConfigReader) async throws {
         default: URL(string: "postgres://postgres@localhost:5432/postgres?sslmode=disable")!
     )
     try app.databases.use(.postgres(url: postgresURL), as: .psql)
-    
+
     app.migrations.add([
         Migrations.CreateTODOs()
     ])
@@ -39,7 +39,7 @@ enum Migrations {
                 .field("contents", .string, .required)
                 .create()
         }
-        
+
         func revert(on database: Database) async throws {
             try await database
                 .schema(DB.TODO.schema)

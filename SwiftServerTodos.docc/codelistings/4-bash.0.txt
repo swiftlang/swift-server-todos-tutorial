@@ -1,0 +1,3 @@
+# In the terminal already running `docker compose up postgres`, press Ctrl-C
+# to stop it, then relaunch bringing Grafana up alongside Postgres.
+% docker compose up postgres grafana

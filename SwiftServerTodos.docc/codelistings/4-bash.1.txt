@@ -1,0 +1,5 @@
+# In the terminal already running `swift run SwiftServerTodos`, press Ctrl-C
+# to stop it, then restart with the OTLP exporter environment variables set.
+% OTEL_EXPORTER_OTLP_PROTOCOL=grpc \
+  OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 \
+  swift run SwiftServerTodos

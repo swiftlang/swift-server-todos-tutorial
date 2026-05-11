@@ -1,6 +1,11 @@
 import Configuration
 import Foundation
 import Logging
+import Metrics
+import OTel
+import ServiceLifecycle
+import SystemMetrics
+import Tracing
 import Vapor
 
 func configureTelemetry(_ config: ConfigReader) async throws {

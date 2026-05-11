@@ -1,0 +1,8 @@
+Open your browser at http://localhost:3000
+
+Click Explore in the left sidebar. At the top of the page you can switch
+between three preconfigured data sources:
+
+  Loki       — logs
+  Tempo      — traces
+  Prometheus — metrics

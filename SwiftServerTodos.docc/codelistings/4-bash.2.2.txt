@@ -1,0 +1,9 @@
+Select "Tempo" from the data source drop-down.
+
+Open the "Search" tab and set "Service Name" to `SwiftServerTodos`, then
+press "Run query". The list on the right shows recent HTTP requests.
+Click any row to open the full trace.
+
+Inside the trace, the Vapor request span wraps its Fluent child spans.
+Use the "Logs for this span" link to jump back to Loki and read the
+log lines written while that request was being handled.

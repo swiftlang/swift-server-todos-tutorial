@@ -1,0 +1,6 @@
+% curl -i -X POST \
+  -H "Content-Type: application/json" \
+  -d '{ "contents": "my first traced todo" }' \
+  localhost:8080/api/todos
+
+% curl localhost:8080/api/todos

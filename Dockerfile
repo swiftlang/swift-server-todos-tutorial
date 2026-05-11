@@ -1,5 +1,5 @@
 # User with a builder image.
-FROM swift:6.1-noble AS builder
+FROM swift:6.3-noble AS builder
 
 # Install OS updates.
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
