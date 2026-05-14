@@ -11,6 +11,10 @@ SwiftServerTodos demonstrates building an HTTP service in Swift. This repository
 * `<root directory>`: Starter code for tutorial exercises.
 * `Completed`: Completed implementation for reference.
 
+**Deploy the completed app:**
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/swift-vapor-openapi-postgres)
+
 ## Tutorial topics
 
 The tutorial covers these Swift server development topics:
