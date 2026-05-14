@@ -19,6 +19,7 @@ The tutorial covers these Swift server development topics:
 * Code generation from an OpenAPI document.
 * Database persistence using the Fluent ORM and PostgreSQL.
 * Service configuration and lifecycle management.
+* Observability with OpenTelemetry — exporting logs, metrics, and traces to Grafana.
 
 ## Requirements
 
@@ -59,6 +60,8 @@ The application uses a three-tier architecture:
 * **HTTP Layer**: Vapor web framework for HTTP request handling.
 * **Business Logic**: OpenAPI-generated handlers for request processing.
 * **Data Layer**: Fluent ORM for database operations with PostgreSQL.
+* **Observability**: OpenTelemetry exporters ship logs, metrics, and traces over OTLP to a Grafana
+  LGTM stack (Loki, Tempo, Prometheus) running in Docker Compose.
 
 ## Dependencies
 
@@ -69,6 +72,10 @@ The application uses a three-tier architecture:
 
 ### Additional libraries
 * [Swift Log](https://swiftpackageindex.com/apple/swift-log/documentation/logging) – Logging framework.
+* [Swift Metrics](https://github.com/apple/swift-metrics) – Metrics API.
+* [Swift Distributed Tracing](https://github.com/apple/swift-distributed-tracing) – Distributed tracing API.
+* [Swift OTel](https://github.com/swift-otel/swift-otel) – OpenTelemetry exporters for logs, metrics, and traces.
+* [Swift System Metrics](https://github.com/apple/swift-system-metrics) – CPU, memory, and process metrics.
 * [ServiceLifecycle](https://github.com/swift-server/swift-service-lifecycle) – Service lifecycle management.
 * [Swift Configuration](https://github.com/apple/swift-configuration) – Service configuration reader.
 
