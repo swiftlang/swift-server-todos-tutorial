@@ -14,36 +14,51 @@ func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Se
         .flatMap { Logger.Level.init(rawValue: $0) } ?? .info
 
     // Logs, metrics, and traces are exported via OpenTelemetry (OTLP).
-    // The OTel diagnostic logger is left as default (stderr) so OTel's own
-    // internal logs don't recurse back through the multiplexed handler below.
+    // The OTel diagnostic logger stays at its default (stderr) for `makeLoggingBackend`.
     var otelConfig = OTel.Configuration.default
     otelConfig.serviceName = "SwiftServerTodos"
 
-    // Create the OTel backends.
+    // Create the OTel logging backend first.
     let otelLoggingBackend = try OTel.makeLoggingBackend(configuration: otelConfig)
-    let otelMetricsBackend = try OTel.makeMetricsBackend(configuration: otelConfig)
-    let otelTracingBackend = try OTel.makeTracingBackend(configuration: otelConfig)
 
     // Fan logs out to both the Vapor console logger and the OTel exporter.
     // The OTel metadata provider attaches `trace_id` and `span_id` from the
     // active span, so logs emitted during a traced request can be correlated
     // with their trace in Grafana.
-    LoggingSystem.bootstrap(
-        { label, metadataProvider in
-            MultiplexLogHandler(
-                [
-                    ConsoleLogger(label: label, console: Terminal(), level: level),
-                    otelLoggingBackend.factory(label),
-                ],
-                metadataProvider: metadataProvider
-            )
-        },
-        metadataProvider: OTel.makeLoggingMetadataProvider()
-    )
+    let otelMetadataProvider = OTel.makeLoggingMetadataProvider()
+    @Sendable
+    func makeLogHandler(label: String) -> MultiplexLogHandler {
+        MultiplexLogHandler(
+            [
+                ConsoleLogger(label: label, console: Terminal(), level: level),
+                otelLoggingBackend.factory(label),
+            ],
+            metadataProvider: otelMetadataProvider
+        )
+    }
+
+    let logger = Logger(label: "SwiftServerTodos", factory: makeLogHandler)
+
+    // Route OTel's own diagnostic logs through the
+    // same multiplexed logger, so they also reach OTLP.
+    otelConfig.diagnosticLogger = .custom(logger)
+
+    // Create the remaining OTel backends.
+    let otelMetricsBackend = try OTel.makeMetricsBackend(configuration: otelConfig)
+    let otelTracingBackend = try OTel.makeTracingBackend(configuration: otelConfig)
+
+    // Bootstrap the global logging system too, as a fallback for any `Logger`
+    // created without going through the root logger above (for example, by
+    // third-party code). Tag those log lines `scope: global` so they're easy
+    // to tell apart from the ones that flow through the task-local root logger.
+    LoggingSystem.bootstrap { label in
+        var handler = makeLogHandler(label: label)
+        handler[metadataKey: "scope"] = "global"
+        return handler
+    }
+
     MetricsSystem.bootstrap(otelMetricsBackend.factory)
     InstrumentationSystem.bootstrap(otelTracingBackend.factory)
-
-    let logger = Logger(label: "SwiftServerTodos")
 
     // Collect system-level metrics (CPU, memory, file descriptors, etc.).
     let systemMetricsMonitor = SystemMetricsMonitor(
@@ -58,7 +73,9 @@ func configureTelemetry(_ config: ConfigReader) async throws -> (Logger, some Se
             otelMetricsBackend.service,
             otelTracingBackend.service,
             systemMetricsMonitor,
-        ], logger: logger)
+        ],
+        logger: logger
+    )
 
     return (logger, telemetryService)
 }

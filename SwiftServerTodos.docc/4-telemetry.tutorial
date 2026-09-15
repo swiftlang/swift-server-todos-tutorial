@@ -44,14 +44,11 @@
             @Step {
                 **Expand** the `configureTelemetry` function to set up OpenTelemetry.
 
-                The function creates OpenTelemetry backends for logs, metrics, and tracing that export
-                data via OTLP. It bootstraps the logging system with a `MultiplexLogHandler` so every
-                log line fans out to both the Vapor console logger and the OTel exporter, and installs
-                an OTel metadata provider so logs emitted during a traced request carry `trace_id` and
-                `span_id` from the active span. It registers the metrics and tracing backends globally
-                to set up Vapor tracing later, and starts a `SystemMetricsMonitor` that automatically
-                collects CPU, memory, and process-level metrics. All OTel services are combined into a
-                `ServiceGroup` for coordinated lifecycle management.
+                The function builds a root `Logger` that sends logs to the console and to OTel.
+                It reuses this logger for the global logging system, for OTel's own diagnostic logs,
+                and for a `SystemMetricsMonitor` that collects CPU and memory metrics. It also
+                registers the metrics and tracing backends globally. Finally, it combines all
+                OTel services into one `ServiceGroup`.
 
                 @Code(name: "Telemetry.swift", file: 4-telemetry.1.swift, previousFile: 4-telemetry.0.swift)
             }

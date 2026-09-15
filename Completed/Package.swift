@@ -10,7 +10,7 @@ let package = Package(
     dependencies: [
         // Server scaffolding
         .package(url: "https://github.com/vapor/vapor", from: "4.0.0"),
-        .package(url: "https://github.com/swift-server/swift-service-lifecycle", from: "2.1.0"),
+        .package(url: "https://github.com/swift-server/swift-service-lifecycle", from: "2.12.0"),
         .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.0.0"),
         .package(url: "https://github.com/swift-server/swift-openapi-vapor", from: "1.0.0"),

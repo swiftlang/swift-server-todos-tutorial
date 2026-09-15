@@ -32,7 +32,7 @@ struct Entrypoint {
             let serviceGroup = ServiceGroup(
                 services: services,
                 gracefulShutdownSignals: [.sigint],
-                cancellationSignals: [.sigterm],
+                cancellationSignals: [.sigterm]
             )
             try await serviceGroup.run()
         }
